@@ -9,21 +9,35 @@ import(
 )
 
 func main(){
-    reader := bufio.NewReader(os.Stdin)
-    for {
-    fmt.Print("$ ")
-    input, _ := reader.ReadString('\n')
+    reader := bufio.NewReader(os.Stdin) // Começamos chamando um leitor para ler os.Stdin
+    
+    for { // Em um loop infinito
 
-    args := strings.Split(strings.TrimSpace(input)," ")
+        fmt.Print("$ ") // Mostre o prompt atual
+        input, _ := reader.ReadString('\n') // Leia o input do usuário, até ler uma quebra delinha
 
-    if len(args) == 1 && (args[0] == "exit" || args[0] == "quit"){
-        os.Exit(0)
+        args := strings.Fields(strings.TrimSpace(input)) // Divida o input do usuário em chamadas e argumentos numa divisão por espaços
+
+        if len(args) == 1 && (args[0] == "exit" || args[0] == "quit"){ // Caso o Input tenha 1 valor e seja exit ou quit, saia do shell
+            os.Exit(0)
+        }
+
+        switch(args[0]){ // Chamamos um switch para o primeiro valor de args
+        case "cd": // Caso seja cd mudamos de diretorio
+            if len(args) == 2{
+                os.Chdir(args[1])
+            }else{
+                fmt.Println("Use cd [diretorio]")
+            }
+        default: // Em default executamos um comando
+            cmd := exec.Command(args[0], args[1:]...) 
+            cmd.Stdin = os.Stdin
+            cmd.Stdout = os.Stdout
+            cmd.Stderr = os.Stderr
+            err := cmd.Run()
+            if err != nil{
+                fmt.Println(err)
+            }
+        }
     }
-
-    cmd := exec.Command(args[0], args[1:]...)
-    cmd.Stdin = os.Stdin
-    cmd.Stdout = os.Stdout
-    cmd.Stderr = os.Stderr
-    cmd.Run()
-}
 }
