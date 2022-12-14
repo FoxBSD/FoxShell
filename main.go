@@ -14,6 +14,10 @@ func main(){
     
         fmt.Print("$ ") // Mostre o prompt atual
         input, _ := reader.ReadString('\n') // Leia o input do usuário, até ler uma quebra delinha
+        
+        if strings.Contains(input, "&"){ // Verifique se a string contém algum & antes do final
+            input = strings.Replace(input, "&", "", -1) // Se houver remova-o
+        }
 
         args := strings.Fields(strings.TrimSpace(input)) // Divida o input do usuário em chamadas e argumentos numa divisão por espaços
 
